@@ -1,0 +1,7 @@
+<xproc-config xmlns="http://xmlcalabash.com/ns/configuration"
+    xmlns:dfdl="urn:daffodil:calabash">
+
+   <implementation type="dfdl:parse"
+                   class-name="edu.illinois.ncsa.daffodil.calabash.DfdlParseStep"/>
+
+</xproc-config>
