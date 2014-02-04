@@ -11,7 +11,7 @@ downloaded from http://www.scala-sbt.org/.
 
 Build the project like this:
 $ sbt package
-$ cp lib_managed/*/*/*/* lib_managed
+$ cp lib_managed/jars/*/*/* lib_managed
 
 
 RUNNING 
@@ -52,9 +52,8 @@ From Unix/Linux:
 $ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.1.jar \
 com.xmlcalabash.drivers.Main -c etc/calabash-config.xml examples/test.xpl
 
-From Windows (untested):
-> scala -cp lib/*;lib_managed/*;target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.1.jar \
-com.xmlcalabash.drivers.Main -c etc/calabash-config.xml examples/test.xpl
+From Windows:
+> scala -cp lib\*;lib_managed\*;target\scala-2.9.2\daffodil-calabash-extension_2.9.2-0.1.jar com.xmlcalabash.drivers.Main -c etc\calabash-config.xml examples\test.xpl
 
 OR like this for troubleshooting (Unix/Linux example):
 $ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.1.jar \

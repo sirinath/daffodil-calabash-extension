@@ -42,6 +42,7 @@ extends DefaultStep(runtime, step) {
 
   val FileOption = new QName("", "file");
   val SchemaOption = new QName("", "schema")
+  val RootOption = new QName("", "root")
   var result: WritablePipe = null
   
   
@@ -68,7 +69,14 @@ extends DefaultStep(runtime, step) {
 //    outputFile(fileURI)
     
     // parse input using schema
+    val compiler = Compiler()
+    val rootOption = getOption(RootOption)
+    if (rootOption != null) {
+      val rootQName = rootOption.getQName()
+      compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
+    }
     val eitherPrOrDiags = DfdlParseStep.parse(
+        compiler,
         Seq(schemaFile), 
         new FileInputStream(new File(fileURI)).getChannel())
     eitherPrOrDiags match {
@@ -143,11 +151,12 @@ object DfdlParseStep {
    * returns a ParseResult
    */
   def parse(
+      compiler: Compiler,
       schemaFiles: Seq[File], 
       input: ReadableByteChannel
       ) : Either[Seq[Diagnostic], ParseResult] = {
     for {
-      pf <- DaffodilFacade.compile(Compiler(), schemaFiles).right
+      pf <- DaffodilFacade.compile(compiler, schemaFiles).right
       dp <- DaffodilFacade.getRootProcessor(pf).right
       pr <- DaffodilFacade.parse(dp, input, -1).right
     } yield pr

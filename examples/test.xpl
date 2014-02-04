@@ -9,9 +9,13 @@
 
     <p:import href="../etc/daffodil-library.xpl"/>
     
+<!--
     <dfdl:parse name="parse" file="../examples/csv/simpleCSV" 
-        schema="../examples/csv/csv.dfdl.xsd" />
-    <!-- <dfdl:parse name="parse" file="../examples/pcap/dns.cap" 
-        schema="../examples/pcap/pcap.dfdl.xsd" /> -->
+        schema="../examples/csv/csv.dfdl.xsd" 
+        root="ex:file" xmlns:ex="http://example.com"/>
+-->
+    <dfdl:parse name="parse" file="../examples/pcap/dns.cap" 
+        schema="../examples/pcap/pcap.dfdl.xsd" 
+        root="ex:pcap" xmlns:ex="http://example.com"/> 
  
 </p:declare-step>

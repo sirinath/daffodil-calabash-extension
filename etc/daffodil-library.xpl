@@ -6,13 +6,14 @@
       <output port="result" />
       <option name="file" required="true" />   
       <option name="schema" required="true" />
+      <option name="root" />          <!-- (QName) -->
 
       <!--
+      <input port="source" />
       <output port="warnings" />
-      <option name="root" />          (QName)
       <option name="show-trace" />    (boolean - default: false)
       <option name="assert-valid" />  (boolean - default: false)
-      <option name="validate-schema" /> (boolean - default: false)
+      <option name="validate-schema" />  (boolean - default: false)
       -->
    </declare-step>
 
