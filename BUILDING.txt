@@ -1,0 +1,27 @@
+BUILDING
+This project uses sbt as the primary build tool, which can be
+downloaded from http://www.scala-sbt.org/.
+
+Build the project like this:
+$ sbt package
+$ cp lib_managed/jars/*/*/* lib_managed
+
+
+RELEASING
+The following steps can be used to create a binary release distribution.
+* Commit all changes.
+$ git tag <version>
+$ mv target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.3.jar .
+$ rm -rf target project/target lib_managed/jars
+$ mkdir -p target/scala-2.9.2
+$ mv daffodil-calabash-extension_2.9.2-0.3.jar target/scala-2.9.2
+$ cd ..
+$ tar zcf daffodil-calabash-extension-<version>-bin.tgz \
+     daffodil-calabash-extension/*
+
+The following steps can be used to create a source binary distribution.
+$ sbt clean
+$ rm -rf project/target
+$ cd ..
+$ tar zcf daffodil-calabash-extension-<version>-src.tgz \
+     daffodil-calabash-extension/*

@@ -9,12 +9,16 @@
       <option name="root" />          <!-- (QName) -->
 
       <!--
-      <input port="source" />
       <output port="warnings" />
       <option name="show-trace" />    (boolean - default: false)
       <option name="assert-valid" />  (boolean - default: false)
       <option name="validate-schema" />  (boolean - default: false)
       -->
    </declare-step>
+   
+   <!-- TODO declare another step that takes an input port instead of a file
+      option. 
+      <input port="source" />
+      -->
 
 </library>

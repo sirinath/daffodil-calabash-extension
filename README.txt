@@ -5,16 +5,7 @@ This project contains an extension step for Calabash
 to parse a file with a DFDL schema.
 
 
-BUILDING
-This project uses sbt as the primary build tool, which can be
-downloaded from http://www.scala-sbt.org/.
-
-Build the project like this:
-$ sbt package
-$ cp lib_managed/jars/*/*/* lib_managed
-
-
-RUNNING 
+RUNNING FROM COMMAND-LINE
 The daffodil-calabash extension only works with scala 2.9.2 at
 this time, since that's the only version of scala that daffodil 0.12.0
 is built with by default.  See http://scala-lang.org/download/all.html
@@ -36,9 +27,8 @@ Daffodil.  Here's a taste:
     <p:import href="../etc/daffodil-library.xpl"/>
     
     <dfdl:parse name="parse" file="../examples/csv/simpleCSV" 
-        schema="../examples/csv/csv.dfdl.xsd" />
-    <!-- <dfdl:parse name="parse" file="../examples/pcap/dns.cap" 
-        schema="../examples/pcap/pcap.dfdl.xsd" /> -->
+        schema="../examples/csv/csv.dfdl.xsd" 
+	root="ex:file" xmlns:ex="http://example.com />
  
 </p:declare-step>
 
@@ -49,14 +39,14 @@ To run Calabash with the Daffodil extension, it's as easy as running
 it from the command-line with specific arguments:
 
 From Unix/Linux:
-$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.1.jar \
+$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.3.jar \
 com.xmlcalabash.drivers.Main -c etc/calabash-config.xml examples/test.xpl
 
 From Windows:
-> scala -cp lib\*;lib_managed\*;target\scala-2.9.2\daffodil-calabash-extension_2.9.2-0.1.jar com.xmlcalabash.drivers.Main -c etc\calabash-config.xml examples\test.xpl
+> scala -cp lib\*;lib_managed\*;target\scala-2.9.2\daffodil-calabash-extension_2.9.2-0.3.jar com.xmlcalabash.drivers.Main -c etc\calabash-config.xml examples\test.xpl
 
 OR like this for troubleshooting (Unix/Linux example):
-$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.1.jar \
+$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.3.jar \
 -Djava.util.logging.config.file=etc/logging.properties \
 com.xmlcalabash.drivers.Main -D -c etc/calabash-config.xml examples/test.xpl
 
@@ -66,6 +56,36 @@ Important things to notice in the command-line:
 * The extension and all its dependencies are added to the classpath.
 * A configuration file is used to tie the dfdl:parse XProc step to the
   extension code. 
+
+
+RUNNING REST SERVER
+Calabash now comes with a RESTful server that can be used to run pipelines.
+
+To see this in action with the Daffodil extension, start the server like so:
+
+From Unix/Linux:
+$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.3.jar \
+com.xmlcalabash.drivers.Piperack -c etc/calabash-config.xml
+
+From Windows:
+> scala -cp lib\*;lib_managed\*;target\scala-2.9.2\daffodil-calabash-extension_2.9.2-0.3.jar com.xmlcalabash.drivers.Piperack -c etc\calabash-config.xml
+
+Note that the etc/calabash-config.xml configuration file preloads two pipelines:
+one for CSV and one for PCAP.
+
+The input to the CSV pipeline is hardcoded to examples/csv/simpleCSV.  To see
+this pipeline in action, execute the following (or do something similar with an 
+HTML page):
+$ curl -X POST http://localhost:8088/pipelines/csv/run
+
+The PCAP pipeline accepts a file option to parse a specified file.  To see this
+pipeline in action, open examples/pcap/pcap-test-page.html in a web browser.
+Then follow these instructions:
+1. Paste the absolute path to one of the sample pcap files in examples/pcap
+   into the first text box on the page.
+2. Press the Set File button.
+3. Press the Run Pipeline button.
+4. Look at the output in the Output area.
 
 
 ACKNOWLEDGEMENTS

@@ -1,0 +1,6 @@
+* Rename dfdl:parse to dfdl:parse-file.  Create a new dfdl:parse step that
+    accepts an input port.
+* Ensure Piperack can be started such that it listens only on the localhost
+    IP address. 
+* Make sure that DFDL schemas are precompiled when pipeline is loaded via 
+    Piperack.
