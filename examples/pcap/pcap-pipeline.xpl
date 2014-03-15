@@ -15,8 +15,8 @@
         schema="pcap.dfdl.xsd" 
         root="ex:pcap" xmlns:ex="http://example.com"/>
         -->
-    <dfdl:parse name="parse" schema="pcap.dfdl.xsd"  
+    <dfdl:parse-file name="parse" schema="pcap.dfdl.xsd"  
         root="ex:pcap" xmlns:ex="http://example.com">
         <p:with-option name="file" select="$file"/>
-    </dfdl:parse>
+    </dfdl:parse-file>
 </p:declare-step>

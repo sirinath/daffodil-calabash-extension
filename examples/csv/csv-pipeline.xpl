@@ -9,8 +9,7 @@
 
     <p:import href="../../etc/daffodil-library.xpl"/>
     
-
-    <dfdl:parse name="parse" file="simpleCSV" 
+    <dfdl:parse-file name="parse" file="simpleCSV" 
         schema="csv.dfdl.xsd" 
         root="ex:file" xmlns:ex="http://example.com"/>
 <!--

@@ -40,7 +40,7 @@ import net.sf.saxon.s9api.QName
  * 
  * @author Jonathan Cranford
  */
-final class DfdlParseStep(runtime: XProcRuntime, step: XAtomicStep)
+final class DfdlParseFileStep(runtime: XProcRuntime, step: XAtomicStep)
 extends DefaultStep(runtime, step) {
 
   val FileOption = new QName("", "file");
@@ -59,6 +59,7 @@ extends DefaultStep(runtime, step) {
     	result.resetWriter()
     }
   }
+  
   
   override def run() {
     super.run()
@@ -81,18 +82,18 @@ extends DefaultStep(runtime, step) {
     
     val input = new FileInputStream(new File(fileURI)).getChannel()
     try {
-	  val pr = compiler.compile(schemaFile)
+      val pr = compiler.compile(schemaFile)
 		.mapOrThrow(_.onPath("/"))
 		.mapOrThrow(_.parse(input, -1))
-	  // TODO use something better than Console
-	  if (!pr.getDiagnostics.isEmpty) {
-	    Console.out.println(pr.getDiagnosticsMessage)
-	  }
-	    // TODO use saxon-jdom to turn JDOM result into XdmNode
-	    val s = pr.result.toString()
-	    val is = new InputSource(new StringReader(s))
-	    val xdmNode = runtime.parse(is)
-	    result.write(xdmNode)
+      // TODO use something better than Console
+      if (!pr.getDiagnostics.isEmpty) {
+        Console.out.println(pr.getDiagnosticsMessage)
+      }
+        // TODO use saxon-jdom to turn JDOM result into XdmNode
+        val s = pr.result.toString()
+        val is = new InputSource(new StringReader(s))
+        val xdmNode = runtime.parse(is)
+        result.write(xdmNode)
     } catch {
       case e:WithDiagnosticsError => Console.err.println(e.getDiagnosticsMessage) 
     }

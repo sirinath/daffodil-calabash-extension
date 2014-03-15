@@ -2,7 +2,7 @@
            xmlns:dfdl="urn:daffodil:calabash"
            version="1.0">
 
-   <declare-step type="dfdl:parse">
+   <declare-step type="dfdl:parse-file">
       <output port="result" />
       <option name="file" required="true" />   
       <option name="schema" required="true" />

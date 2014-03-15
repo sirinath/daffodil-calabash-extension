@@ -21,7 +21,7 @@ $ tar zcf daffodil-calabash-extension-<version>-bin.tgz \
 
 The following steps can be used to create a source binary distribution.
 $ sbt clean
-$ rm -rf project/target
+$ rm -rf project
 $ cd ..
 $ tar zcf daffodil-calabash-extension-<version>-src.tgz \
      daffodil-calabash-extension/*
