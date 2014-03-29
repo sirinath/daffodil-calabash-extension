@@ -11,10 +11,10 @@ RELEASING
 The following steps can be used to create a binary release distribution.
 * Commit all changes.
 $ git tag <version>
-$ mv target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.3.jar .
+$ mv target/scala-2.9.2/daffodil-calabash-extension_*.jar .
 $ rm -rf target project/target lib_managed/jars
 $ mkdir -p target/scala-2.9.2
-$ mv daffodil-calabash-extension_2.9.2-0.3.jar target/scala-2.9.2
+$ mv daffodil-calabash-extension_*.jar target/scala-2.9.2
 $ cd ..
 $ tar zcf daffodil-calabash-extension-<version>-bin.tgz \
      daffodil-calabash-extension/*

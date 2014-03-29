@@ -1,6 +1,6 @@
 name := "daffodil-calabash-extension"
 
-version := "0.3"
+version := "0.4"
 
 scalaVersion := "2.9.2"
 

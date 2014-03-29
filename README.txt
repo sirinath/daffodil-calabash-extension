@@ -39,16 +39,16 @@ To run Calabash with the Daffodil extension, it's as easy as running
 it from the command-line with specific arguments:
 
 From Unix/Linux:
-$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.3.jar \
-com.xmlcalabash.drivers.Main -c etc/calabash-config.xml examples/test.xpl
+$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.4.jar \
+com.xmlcalabash.drivers.Main -c etc/calabash-config.xml examples/parse-file-test.xpl
 
 From Windows:
-> scala -cp lib\*;lib_managed\*;target\scala-2.9.2\daffodil-calabash-extension_2.9.2-0.3.jar com.xmlcalabash.drivers.Main -c etc\calabash-config.xml examples\test.xpl
+> scala -cp lib\*;lib_managed\*;target\scala-2.9.2\daffodil-calabash-extension_2.9.2-0.4.jar com.xmlcalabash.drivers.Main -c etc\calabash-config.xml examples\parse-file-test.xpl
 
 OR like this for troubleshooting (Unix/Linux example):
-$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.3.jar \
+$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.4.jar \
 -Djava.util.logging.config.file=etc/logging.properties \
-com.xmlcalabash.drivers.Main -D -c etc/calabash-config.xml examples/test.xpl
+com.xmlcalabash.drivers.Main -D -c etc/calabash-config.xml examples/parse-file-test.xpl
 
 Important things to notice in the command-line: 
 * This command-line executes Calabash with a custom classpath and
@@ -64,11 +64,11 @@ Calabash now comes with a RESTful server that can be used to run pipelines.
 To see this in action with the Daffodil extension, start the server like so:
 
 From Unix/Linux:
-$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.3.jar \
+$ scala -cp lib/*:lib_managed/*:target/scala-2.9.2/daffodil-calabash-extension_2.9.2-0.4.jar \
 com.xmlcalabash.drivers.Piperack -c etc/calabash-config.xml
 
 From Windows:
-> scala -cp lib\*;lib_managed\*;target\scala-2.9.2\daffodil-calabash-extension_2.9.2-0.3.jar com.xmlcalabash.drivers.Piperack -c etc\calabash-config.xml
+> scala -cp lib\*;lib_managed\*;target\scala-2.9.2\daffodil-calabash-extension_2.9.2-0.4.jar com.xmlcalabash.drivers.Piperack -c etc\calabash-config.xml
 
 Note that the etc/calabash-config.xml configuration file preloads two pipelines:
 one for CSV and one for PCAP.
