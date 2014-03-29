@@ -16,9 +16,11 @@
       -->
    </declare-step>
    
-   <!-- TODO declare another step that takes an input port instead of a file
-      option. 
-      <input port="source" />
-      -->
+   <declare-step type="dfdl:parse">
+      <input port="source" />   <!-- must be base64-encoded version of input, as created by p:data -->
+      <output port="result" />
+      <option name="schema" required="true" />
+      <option name="root" />          <!-- (QName) -->
+   </declare-step>
 
 </library>
