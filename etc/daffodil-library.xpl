@@ -17,7 +17,26 @@
    </declare-step>
    
    <declare-step type="dfdl:parse">
-      <input port="source" />   <!-- must be base64-encoded version of input, as created by p:data -->
+      <!-- 
+         The text content of the root element is used as the input.
+         
+         If the root element has an 'encoding' attribute with a value of 
+         'base64', then the input is base64-decoded before being passed
+         to Daffodil.
+         
+         Otherwise, if there is a 'charset' attribute or a charset parameter
+         in a 'content-type' attribute, then the text is encoded using that
+         character set before being passed to parser.
+         
+         Otherwise, if no valid character set is specified, the text is encoded
+         to UTF-8 before being passed to the parser.
+         
+         Note that p:data produces exactly the right kind of XML to be
+         processed by this step.  See http://www.w3.org/TR/xproc/#p.data
+         for more details.
+      -->
+      <input port="source" />   
+      
       <output port="result" />
       <option name="schema" required="true" />
       <option name="root" />          <!-- (QName) -->

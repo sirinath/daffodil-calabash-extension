@@ -7,8 +7,6 @@ scalaVersion := "2.9.2"
 libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-core" % "0.12.0" 
   exclude("com.novocode", "junit-interface")
   exclude("jline", "jline")
-  exclude("junit", "junit")
-  exclude("junit", "junit-dep")
   exclude("net.sourceforge.expectj", "expectj")
   exclude("org.rogach", "scallop_2.9.2")
   exclude("org.scala-tools.testing", "test-interface")
@@ -17,8 +15,6 @@ libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-core" % "0.12.0"
 libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-lib" % "0.12.0"
   exclude("com.novocode", "junit-interface")
   exclude("jline", "jline")
-  exclude("junit", "junit")
-  exclude("junit", "junit-dep")
   exclude("net.sourceforge.expectj", "expectj")
   exclude("org.rogach", "scallop_2.9.2")
   exclude("org.scala-tools.testing", "test-interface")
@@ -27,8 +23,6 @@ libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-lib" % "0.12.0"
 libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-runtime1" % "0.12.0"
   exclude("com.novocode", "junit-interface")
   exclude("jline", "jline")
-  exclude("junit", "junit")
-  exclude("junit", "junit-dep")
   exclude("net.sourceforge.expectj", "expectj")
   exclude("org.rogach", "scallop_2.9.2")
   exclude("org.scala-tools.testing", "test-interface")
@@ -37,7 +31,7 @@ libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-runtime1" % "0.12.0"
 libraryDependencies ++= Seq(
   "commons-logging" % "commons-logging" % "1.1.+"
     , "commons-codec" % "commons-codec" % "1.6"
-    , "commons-io" % "commons-io" % "1.3.1"
+    , "commons-io" % "commons-io" % "2.4"
 )
 
 

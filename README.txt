@@ -28,7 +28,7 @@ Daffodil.  Here's a taste:
     
     <dfdl:parse name="parse" file="../examples/csv/simpleCSV" 
         schema="../examples/csv/csv.dfdl.xsd" 
-	root="ex:file" xmlns:ex="http://example.com />
+	root="ex:file" xmlns:ex="http://example.com" />
  
 </p:declare-step>
 

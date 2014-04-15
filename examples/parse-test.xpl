@@ -4,19 +4,21 @@
                 name="pipeline"
                 version="1.0">
     <p:input port="source"/>
-    <p:output port="result" primary="true">
-        <p:pipe port="result" step="parse"/>
-    </p:output>
+    <p:output port="result" primary="true"/>
 
     <p:import href="../etc/daffodil-library.xpl"/>
     
 <!--
+    <p:identity/>
+-->
+    
     <dfdl:parse name="parse" 
         schema="../examples/csv/csv.dfdl.xsd" 
         root="ex:file" xmlns:ex="http://example.com"/>
--->
+<!--
     <dfdl:parse name="parse" 
         schema="../examples/pcap/pcap.dfdl.xsd" 
         root="ex:pcap" xmlns:ex="http://example.com"/> 
+-->
  
 </p:declare-step>

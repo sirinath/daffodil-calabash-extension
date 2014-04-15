@@ -10,31 +10,30 @@
  */
 package edu.illinois.ncsa.daffodil.calabash
 
+import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.FileInputStream
+import java.io.InputStream
 import java.io.StringReader
 import java.net.URI
-import java.nio.channels.ReadableByteChannel
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.channels.Channels
+import java.nio.charset.Charset
+
+import org.apache.commons.io.input.CharSequenceInputStream
 import org.xml.sax.InputSource
-import com.xmlcalabash.core.XProcConstants
+
 import com.xmlcalabash.core.XProcRuntime
+import com.xmlcalabash.io.ReadablePipe
 import com.xmlcalabash.io.WritablePipe
 import com.xmlcalabash.library.DefaultStep
 import com.xmlcalabash.model.RuntimeValue
 import com.xmlcalabash.runtime.XAtomicStep
-import com.xmlcalabash.util.TreeWriter
-import edu.illinois.ncsa.daffodil.api.DFDL.ParseResult
-import edu.illinois.ncsa.daffodil.api.Diagnostic
+import com.xmlcalabash.util.Base64
+
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.WithDiagnosticsError
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.wdToRichWd
 import edu.illinois.ncsa.daffodil.compiler.Compiler
 import net.sf.saxon.s9api.QName
-import com.xmlcalabash.io.ReadablePipe
-import com.xmlcalabash.util.Base64
-import java.io.ByteArrayInputStream
-import java.nio.channels.Channels
+import net.sf.saxon.s9api.XdmNode
 
 /**
  * A Calabash extension step that uses a DFDL schema to parse data from input
@@ -43,11 +42,19 @@ import java.nio.channels.Channels
  * @author Jonathan Cranford
  */
 final class DfdlParseStep(runtime: XProcRuntime, step: XAtomicStep)
-extends DefaultStep(runtime, step) {
+extends DefaultStep(runtime, step) with DfdlParseUtilities {
+  
+  val xpathCompiler = runtime.getProcessor().newXPathCompiler()
+
+  val EncodingXPath = "/*/@encoding"
+  val CharsetXPath = "/*/@charset"
+  val ContentTypeXPath = "/*/@content-type"
+      
   
   // init block 
   {
-	  Console.out.println("DfdlParseStep constructor called")
+	  debug("constructor called")
+	  xpathCompiler.setCaching(true)
   }
 
   val SchemaOption = new QName("", "schema")
@@ -78,14 +85,36 @@ extends DefaultStep(runtime, step) {
     // see Error step for better way to report
     assert(schemaFile.exists())
     
-    // decode input - assumes that the text node of the root element is
-    // base64-encoded, as is done by p:data
+    /*
+     * The text content of the root element of the input is the input for the
+     * parser.
+         If the root element has an 'encoding' attribute with a value of 
+         'base64', then the input is base64-decoded before being passed
+         to Daffodil.
+         
+         charset - either charset attribute or charset in content-type attribute
+         - encode to that before passing to parser; otherwise, use UTF-8
+         
+         Note that p:data produces exactly the right kind of XML to be
+         processed by this step.  See http://www.w3.org/TR/xproc/#p.data
+         for more details.
+     */
     // Downside of this design: it reads the whole document into memory.
     // As near as I can tell, this is a limitation of Calabash.
-    val text = inputPipe.read().getUnderlyingNode().getStringValue();
-    val decoded = Base64.decode(text)
-//    Console.out.println("base64-encoded input is: ")
-//    Console.out.println(text)
+    val inputNode = inputPipe.read()
+    val text = inputNode.getUnderlyingNode().getStringValue();
+    
+    val encodingAtt = xpathCompiler.evaluateSingle(EncodingXPath, inputNode)
+    val encoding = if (encodingAtt == null) null else encodingAtt.getStringValue()
+    debug("encoding is " + encoding)
+    val inputStream: InputStream = if ("base64".equals(encoding)) {
+    	debug("Using base64 encoding...");
+	    new ByteArrayInputStream(Base64.decode(text))
+    } else {
+    	val charset = getDeclaredCharset(inputNode)
+    	debug("Using " + charset + " charset...")
+		new CharSequenceInputStream(text, toCharset(charset))
+    }
     
     // parse input using schema
     val compiler = Compiler()
@@ -95,7 +124,7 @@ extends DefaultStep(runtime, step) {
       compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
     }
     
-    val input = Channels.newChannel(new ByteArrayInputStream(decoded))
+    val input = Channels.newChannel(inputStream) 
     try {
 	  val pr = compiler.compile(schemaFile)
 		.mapOrThrow(_.onPath("/"))
@@ -115,9 +144,54 @@ extends DefaultStep(runtime, step) {
   }
   
   
-//  private def resolveURI(v: RuntimeValue): URI =
-//    v.getBaseURI().resolve(v.getString())
-//  
+  // utilty method - if something more complex is needed, use a real logging framework
+  private def debug(s: String) {
+    if (runtime.getDebug()) {
+      Console.err.println(getClass().getSimpleName() + ": " + s)
+    }
+  }
+  
+  
+  /**
+   *  charset - either charset attribute or charset in content-type attribute;
+         otherwise, use the default
+   */
+  private def getDeclaredCharset(root: XdmNode): String = {
+    val charsetAtt = xpathCompiler.evaluateSingle(CharsetXPath, root)
+    if (charsetAtt == null) {
+    	val contentType = xpathCompiler.evaluateSingle(ContentTypeXPath, root)
+    	if (contentType == null) {
+    	  DefaultCharset
+    	} else {
+    	  parseCharsetFromContentType(contentType.getStringValue())
+    	}
+    } else {
+    	charsetAtt.getStringValue()
+    }
+  }
+  
+  
+  /**
+   * Converts given charset to Charset object, using DefaultCharset in case
+   * of failure.
+   */
+  private def toCharset(charset: String): Charset = {
+    try {
+      Charset.forName(charset)
+    } catch {
+      case e => {
+        // TODO use something better than Console
+        Console.err.println("Invalid charset: " + charset + ": " + e.toString)
+        Charset.forName(DefaultCharset)
+      }
+    }
+  }
+  
+  
+  // Resolves URIs against the base-uri.  Works with relative paths too.
+  private def resolveURI(v: RuntimeValue): URI =
+    v.getBaseURI().resolve(v.getString())
+  
 //  
 //  private def outputFile(fileURI: java.net.URI): Unit = {
 //	  val t = new TreeWriter(runtime)
@@ -137,4 +211,21 @@ extends DefaultStep(runtime, step) {
   
   // TODO add support for DFDL validation
   
+}
+
+
+// trait to hold utility methods and constants to simplify testing
+trait DfdlParseUtilities {
+  
+  val DefaultCharset = "UTF-8"
+    
+  // public to allow for unit testing
+  def parseCharsetFromContentType(contentType: String): String = {
+    // NOTE: This is a hack.  A secure implementation would restrict this to valid charsets only.
+    val charsetRegex = """;[ \t]*charset[ \t]*=[ \t]*"?([-\w\.:+]+)""".r
+	charsetRegex findFirstIn contentType match {
+	  case Some(charsetRegex(cs)) => cs			// extracts from regex group
+	  case None				    => DefaultCharset
+    }
+  }
 }
