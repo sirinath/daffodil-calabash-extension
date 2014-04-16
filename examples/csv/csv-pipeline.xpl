@@ -3,9 +3,7 @@
                 xmlns:dfdl="urn:daffodil:calabash"
                 name="csv-pipeline"
                 version="1.0">
-    <p:output port="result" primary="true">
-        <p:pipe port="result" step="parse"/>
-    </p:output>
+    <p:output port="result" primary="true"/>
 
     <p:import href="../../etc/daffodil-library.xpl"/>
     

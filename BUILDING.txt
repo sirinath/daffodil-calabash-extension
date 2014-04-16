@@ -7,6 +7,17 @@ $ sbt package
 $ cp lib_managed/jars/*/*/* lib_managed
 
 
+OTHER BUILD TARGETS
+  tasks 
+        - Lists all available tasks
+  compile
+        - Compiles all scala and java files
+  update-classifiers  
+        - Downloads all source and javadoc jars for dependencies 
+  eclipse
+        - Generates eclipse project files
+
+
 RELEASING
 The following steps can be used to create a binary release distribution.
 * Commit all changes.

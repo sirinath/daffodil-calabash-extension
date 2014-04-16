@@ -2,6 +2,8 @@
 /.classpath
 /.project
 /.settings
-/project
+/project/target
 /target
 /lib_managed
+/.eclipse-bak
+/project/project
