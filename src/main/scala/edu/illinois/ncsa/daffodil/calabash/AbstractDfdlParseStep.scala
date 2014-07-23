@@ -41,17 +41,21 @@
  */
 package edu.illinois.ncsa.daffodil.calabash
 
-import com.xmlcalabash.library.DefaultStep
+import java.io.StringReader
+import java.nio.channels.ReadableByteChannel
+
+import org.xml.sax.InputSource
+
 import com.xmlcalabash.core.XProcRuntime
-import com.xmlcalabash.runtime.XAtomicStep
-import net.sf.saxon.s9api.QName
 import com.xmlcalabash.io.WritablePipe
+import com.xmlcalabash.library.DefaultStep
+import com.xmlcalabash.runtime.XAtomicStep
+
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.WithDiagnosticsError
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.wdToRichWd
+import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.WithDiagnosticsError
 import edu.illinois.ncsa.daffodil.compiler.Compiler
-import java.nio.channels.ReadableByteChannel
-import org.xml.sax.InputSource
-import java.io.StringReader
+import net.sf.saxon.s9api.QName
 
 /**
  * Abstract parent class for all calabash extension steps. 
@@ -76,7 +80,7 @@ extends DefaultStep(runtime, step) {
     }
   }
   
-  // Parses the given channel and write to the result port
+  // Parses the given channel and writes to the result pipe
   protected def parse(schemaFile: java.io.File, input: ReadableByteChannel): Unit = {
 
 	  // parse input using schema
@@ -88,9 +92,14 @@ extends DefaultStep(runtime, step) {
 	  }
 
 	  try {
-		  val pr = compiler.compile(schemaFile)
-				  .mapOrThrow(_.onPath("/"))
-				  .mapOrThrow(_.parse(input, -1));
+		  val dp = compiler.compile(schemaFile)
+				  .mapOrThrow(_.onPath("/"));
+		  if (dp.isError) {
+		    throw new WithDiagnosticsError(dp)
+		  }
+		  
+		  val pr = dp.parse(input, -1)
+
 		  // TODO use something better than Console
 		  if (!pr.getDiagnostics.isEmpty) {
 			  Console.out.println(pr.getDiagnosticsMessage)
