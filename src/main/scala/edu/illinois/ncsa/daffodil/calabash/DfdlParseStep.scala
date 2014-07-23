@@ -73,7 +73,7 @@ import net.sf.saxon.s9api.XdmNode
  * @author Jonathan Cranford
  */
 final class DfdlParseStep(runtime: XProcRuntime, step: XAtomicStep)
-extends DefaultStep(runtime, step) with DfdlParseUtilities {
+extends AbstractDfdlParseStep(runtime, step) with DfdlParseUtilities {
   
   val xpathCompiler = runtime.getProcessor().newXPathCompiler()
 
@@ -88,25 +88,12 @@ extends DefaultStep(runtime, step) with DfdlParseUtilities {
 	  xpathCompiler.setCaching(true)
   }
 
-  val SchemaOption = new QName("", "schema")
-  val RootOption = new QName("", "root")
-  var result: WritablePipe = null
   var inputPipe: ReadablePipe = null
   
   override def setInput(port: String, pipe: ReadablePipe) {
     inputPipe = pipe
   }
   
-  // TODO add diagnostics output port
-  override def setOutput(port: String, pipe: WritablePipe) {
-    result = pipe
-  }
-  
-  override def reset() {
-    if (result != null) {
-    	result.resetWriter()
-    }
-  }
   
   override def run() {
     super.run()
@@ -199,37 +186,6 @@ extends DefaultStep(runtime, step) with DfdlParseUtilities {
   private def resolveURI(v: RuntimeValue): URI = v.getBaseURI().resolve(v.getString());
   
    
-  // Parses the given channel and write to the result port
-  private def parse(schemaFile: java.io.File, input: ReadableByteChannel): Unit = {
-
-	  // parse input using schema
-	  val compiler = Compiler();
-	  val rootOption = getOption(RootOption);
-	  if (rootOption != null) {
-		  val rootQName = rootOption.getQName();
-		  compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
-	  }
-
-	  try {
-		  val pr = compiler.compile(schemaFile)
-				  .mapOrThrow(_.onPath("/"))
-				  .mapOrThrow(_.parse(input, -1));
-		  // TODO use something better than Console
-		  if (!pr.getDiagnostics.isEmpty) {
-			  Console.out.println(pr.getDiagnosticsMessage)
-		  }
-		  // TODO use saxon-jdom to turn JDOM result into XdmNode
-		  val s = pr.result.toString();
-		  val is = new InputSource(new StringReader(s))
-		  val xdmNode = runtime.parse(is)
-		  result.write(xdmNode)
-	  } 
-	  catch {
-	  	case e:WithDiagnosticsError => Console.err.println(e.getDiagnosticsMessage) 
-	  }
-  }
-  
-  
 //  
 //  private def outputFile(fileURI: java.net.URI): Unit = {
 //	  val t = new TreeWriter(runtime)
