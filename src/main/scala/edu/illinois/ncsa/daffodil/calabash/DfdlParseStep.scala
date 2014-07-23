@@ -46,6 +46,7 @@ import java.io.InputStream
 import java.io.StringReader
 import java.net.URI
 import java.nio.channels.Channels
+import java.nio.channels.ReadableByteChannel
 import java.nio.charset.Charset
 
 import org.apache.commons.io.input.CharSequenceInputStream
@@ -146,31 +147,7 @@ extends DefaultStep(runtime, step) with DfdlParseUtilities {
 		new CharSequenceInputStream(text, toCharset(charset))
     }
     
-    // parse input using schema
-    val compiler = Compiler()
-    val rootOption = getOption(RootOption)
-    if (rootOption != null) {
-      val rootQName = rootOption.getQName()
-      compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
-    }
-    
-    val input = Channels.newChannel(inputStream) 
-    try {
-	  val pr = compiler.compile(schemaFile)
-		.mapOrThrow(_.onPath("/"))
-		.mapOrThrow(_.parse(input, -1))
-	  // TODO use something better than Console
-	  if (!pr.getDiagnostics.isEmpty) {
-	    Console.out.println(pr.getDiagnosticsMessage)
-	  }
-	    // TODO use saxon-jdom to turn JDOM result into XdmNode
-	    val s = pr.result.toString()
-	    val is = new InputSource(new StringReader(s))
-	    val xdmNode = runtime.parse(is)
-	    result.write(xdmNode)
-    } catch {
-      case e:WithDiagnosticsError => Console.err.println(e.getDiagnosticsMessage) 
-    }
+    parse(schemaFile, Channels.newChannel(inputStream))
   }
   
   
@@ -219,8 +196,39 @@ extends DefaultStep(runtime, step) with DfdlParseUtilities {
   
   
   // Resolves URIs against the base-uri.  Works with relative paths too.
-  private def resolveURI(v: RuntimeValue): URI =
-    v.getBaseURI().resolve(v.getString())
+  private def resolveURI(v: RuntimeValue): URI = v.getBaseURI().resolve(v.getString());
+  
+   
+  // Parses the given channel and write to the result port
+  private def parse(schemaFile: java.io.File, input: ReadableByteChannel): Unit = {
+
+	  // parse input using schema
+	  val compiler = Compiler();
+	  val rootOption = getOption(RootOption);
+	  if (rootOption != null) {
+		  val rootQName = rootOption.getQName();
+		  compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
+	  }
+
+	  try {
+		  val pr = compiler.compile(schemaFile)
+				  .mapOrThrow(_.onPath("/"))
+				  .mapOrThrow(_.parse(input, -1));
+		  // TODO use something better than Console
+		  if (!pr.getDiagnostics.isEmpty) {
+			  Console.out.println(pr.getDiagnosticsMessage)
+		  }
+		  // TODO use saxon-jdom to turn JDOM result into XdmNode
+		  val s = pr.result.toString();
+		  val is = new InputSource(new StringReader(s))
+		  val xdmNode = runtime.parse(is)
+		  result.write(xdmNode)
+	  } 
+	  catch {
+	  	case e:WithDiagnosticsError => Console.err.println(e.getDiagnosticsMessage) 
+	  }
+  }
+  
   
 //  
 //  private def outputFile(fileURI: java.net.URI): Unit = {
