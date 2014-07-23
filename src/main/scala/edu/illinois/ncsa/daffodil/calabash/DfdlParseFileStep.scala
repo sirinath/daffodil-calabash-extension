@@ -71,24 +71,9 @@ import net.sf.saxon.s9api.QName
  * @author Jonathan Cranford
  */
 final class DfdlParseFileStep(runtime: XProcRuntime, step: XAtomicStep)
-extends DefaultStep(runtime, step) {
+extends AbstractDfdlParseStep(runtime, step) {
 
   val FileOption = new QName("", "file");
-  val SchemaOption = new QName("", "schema")
-  val RootOption = new QName("", "root")
-  var result: WritablePipe = null
-  
-  
-  // TODO add diagnostics output port
-  override def setOutput(port: String, pipe: WritablePipe) {
-    result = pipe
-  }
-  
-  override def reset() {
-    if (result != null) {
-    	result.resetWriter()
-    }
-  }
   
   
   override def run() {
@@ -102,31 +87,7 @@ extends DefaultStep(runtime, step) {
     val fileURI = resolveURI(getOption(FileOption))
 //    outputFile(fileURI)
     
-    // parse input using schema
-    val compiler = Compiler()
-    val rootOption = getOption(RootOption)
-    if (rootOption != null) {
-      val rootQName = rootOption.getQName()
-      compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
-    }
-    
-    val input = new FileInputStream(new File(fileURI)).getChannel()
-    try {
-      val pr = compiler.compile(schemaFile)
-		.mapOrThrow(_.onPath("/"))
-		.mapOrThrow(_.parse(input, -1))
-      // TODO use something better than Console
-      if (!pr.getDiagnostics.isEmpty) {
-        Console.out.println(pr.getDiagnosticsMessage)
-      }
-        // TODO use saxon-jdom to turn JDOM result into XdmNode
-        val s = pr.result.toString()
-        val is = new InputSource(new StringReader(s))
-        val xdmNode = runtime.parse(is)
-        result.write(xdmNode)
-    } catch {
-      case e:WithDiagnosticsError => Console.err.println(e.getDiagnosticsMessage) 
-    }
+    parse(schemaFile, new FileInputStream(new File(fileURI)).getChannel())
   }
   
   
