@@ -43,27 +43,18 @@ package edu.illinois.ncsa.daffodil.calabash
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
-import java.io.StringReader
 import java.net.URI
 import java.nio.channels.Channels
-import java.nio.channels.ReadableByteChannel
 import java.nio.charset.Charset
 
 import org.apache.commons.io.input.CharSequenceInputStream
-import org.xml.sax.InputSource
 
 import com.xmlcalabash.core.XProcRuntime
 import com.xmlcalabash.io.ReadablePipe
-import com.xmlcalabash.io.WritablePipe
-import com.xmlcalabash.library.DefaultStep
 import com.xmlcalabash.model.RuntimeValue
 import com.xmlcalabash.runtime.XAtomicStep
 import com.xmlcalabash.util.Base64
 
-import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.WithDiagnosticsError
-import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.wdToRichWd
-import edu.illinois.ncsa.daffodil.compiler.Compiler
-import net.sf.saxon.s9api.QName
 import net.sf.saxon.s9api.XdmNode
 
 /**

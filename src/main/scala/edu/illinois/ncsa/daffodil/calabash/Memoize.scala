@@ -1,0 +1,67 @@
+/*
+ NOTICE
+
+ This technical data was produced for the U. S. Government under
+ Contract No. W15P7T-13-C-A802, and is subject to the Rights in
+ Technical Data-Noncommercial Items clause at DFARS 252.227-7013 (FEB
+ 2012)
+
+Copyright (C) 2013-2014 The MITRE Corporation, All Rights Reserved.
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal with the Software without
+restriction, including without limitation the rights to use, copy,
+modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimers.
+
+ 2. Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following
+    disclaimers in the documentation and/or other materials
+    provided with the distribution.
+
+ 3. Neither the names of The MITRE Corporation, nor the names of
+    its contributors may be used to endorse or promote products
+    derived from this Software without specific prior written
+    permission.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE CONTRIBUTORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS WITH THE SOFTWARE.
+ */
+package edu.illinois.ncsa.daffodil.calabash
+
+ 
+/**
+ * Memoizes the given function so that the function is only called once for
+ * a given input.
+ * 
+ * <p>Does not work for recursive functions. Is not thread-safe; multiple 
+ * invocations on the same input in separate threads is not safe.</p>
+ * 
+ * @author http://michid.wordpress.com/2009/02/23/function_mem/
+ */
+class Memoize[-T, +R](f: T => R) extends (T => R) {
+  import scala.collection.mutable
+  private[this] val vals = mutable.Map.empty[T, R]
+ 
+  def apply(x: T): R = {
+    if (vals.contains(x)) {
+      vals(x)
+    }
+    else {
+      val y = f(x)
+      vals += ((x, y))
+      y
+    }
+  }
+}

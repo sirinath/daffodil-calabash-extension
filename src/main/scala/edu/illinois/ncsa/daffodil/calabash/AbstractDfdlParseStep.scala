@@ -50,10 +50,10 @@ import com.xmlcalabash.library.DefaultStep
 import com.xmlcalabash.runtime.XAtomicStep
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.WithDiagnosticsError
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.wdToRichWd
-import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.WithDiagnosticsError
 import edu.illinois.ncsa.daffodil.compiler.Compiler
 import net.sf.saxon.s9api.QName
 import edu.illinois.ncsa.daffodil.api.DFDL.DataProcessor
+import java.io.File
 
 /**
  * Abstract parent class for all calabash extension steps. 
@@ -84,11 +84,15 @@ extends DefaultStep(runtime, step) {
 
 		  // compile schema
 		  val rootOption = getOption(RootOption);
-		  val dp = 
-		    if (rootOption == null) 
-			  compile(schemaFile, null)
-		    else
-		      compile(schemaFile, rootOption.getQName())
+		  val dp = if (rootOption == null) {
+			  SchemaRegistry.getOrCompile(schemaFile.getCanonicalFile(), null)
+		  } else {
+			  SchemaRegistry.getOrCompile(schemaFile.getCanonicalFile(), 
+			      rootOption.getQName());
+		  }
+		  if (dp.isError) {
+			  throw new WithDiagnosticsError(dp)
+		  }
 		  
 		  // parse input
 		  val pr = dp.parse(input, -1)
@@ -108,23 +112,8 @@ extends DefaultStep(runtime, step) {
 		  result.write(xdmNode)
 	  } 
 	  catch {
-	  	case e:WithDiagnosticsError => Console.err.println(e.getDiagnosticsMessage) 
+	  	case e:WithDiagnosticsError => Console.err.println(e.getMessage) 
 	  }
-  }
-  
-  
-  def compile(schemaFile: java.io.File, rootQName: QName): DataProcessor = {
-	  val compiler = Compiler();
-	  if (rootQName != null) {
-		  compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
-	  }
-
-	  val dp = compiler.compile(schemaFile)
-			  .mapOrThrow(_.onPath("/"));
-	  if (dp.isError) {
-		  throw new WithDiagnosticsError(dp)
-	  }
-	  dp
   }
   
 }
