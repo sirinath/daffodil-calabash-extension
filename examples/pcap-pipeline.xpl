@@ -5,8 +5,8 @@
     <p:input port="source" primary="true"/>
     <p:output port="result" primary="true"/>
 
-    <p:import href="../../etc/daffodil-library.xpl"/>
+    <p:import href="../etc/daffodil-library.xpl"/>
     
-    <dfdl:parse schema="pcap.dfdl.xsd"  
-        root="ex:pcap" xmlns:ex="http://example.com"/>
+    <dfdl:parse schema="PCAP/schemas/pcap.dfdl.xsd"  
+        root="pcap:PCAP" xmlns:pcap="urn:pcap:2.4"/>
 </p:declare-step>
