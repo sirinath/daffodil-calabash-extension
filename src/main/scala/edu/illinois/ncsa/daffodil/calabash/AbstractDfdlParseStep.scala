@@ -43,19 +43,17 @@ package edu.illinois.ncsa.daffodil.calabash
 
 import java.io.StringReader
 import java.nio.channels.ReadableByteChannel
-
 import org.xml.sax.InputSource
-
 import com.xmlcalabash.core.XProcRuntime
 import com.xmlcalabash.io.WritablePipe
 import com.xmlcalabash.library.DefaultStep
 import com.xmlcalabash.runtime.XAtomicStep
-
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.WithDiagnosticsError
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.wdToRichWd
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.WithDiagnosticsError
 import edu.illinois.ncsa.daffodil.compiler.Compiler
 import net.sf.saxon.s9api.QName
+import edu.illinois.ncsa.daffodil.api.DFDL.DataProcessor
 
 /**
  * Abstract parent class for all calabash extension steps. 
@@ -82,28 +80,27 @@ extends DefaultStep(runtime, step) {
   
   // Parses the given channel and writes to the result pipe
   protected def parse(schemaFile: java.io.File, input: ReadableByteChannel): Unit = {
-
-	  // parse input using schema
-	  val compiler = Compiler();
-	  val rootOption = getOption(RootOption);
-	  if (rootOption != null) {
-		  val rootQName = rootOption.getQName();
-		  compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
-	  }
-
 	  try {
-		  val dp = compiler.compile(schemaFile)
-				  .mapOrThrow(_.onPath("/"));
-		  if (dp.isError) {
-		    throw new WithDiagnosticsError(dp)
-		  }
+
+		  // compile schema
+		  val rootOption = getOption(RootOption);
+		  val dp = 
+		    if (rootOption == null) 
+			  compile(schemaFile, null)
+		    else
+		      compile(schemaFile, rootOption.getQName())
 		  
+		  // parse input
 		  val pr = dp.parse(input, -1)
 
-		  // TODO use something better than Console
+		  // TODO use something better for error reporting than Console
+		  if (pr.isError) {
+		    throw new WithDiagnosticsError(pr)
+		  }
 		  if (!pr.getDiagnostics.isEmpty) {
 			  Console.out.println(pr.getDiagnosticsMessage)
 		  }
+		  
 		  // TODO use saxon-jdom to turn JDOM result into XdmNode
 		  val s = pr.result.toString();
 		  val is = new InputSource(new StringReader(s))
@@ -113,6 +110,21 @@ extends DefaultStep(runtime, step) {
 	  catch {
 	  	case e:WithDiagnosticsError => Console.err.println(e.getDiagnosticsMessage) 
 	  }
+  }
+  
+  
+  def compile(schemaFile: java.io.File, rootQName: QName): DataProcessor = {
+	  val compiler = Compiler();
+	  if (rootQName != null) {
+		  compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
+	  }
+
+	  val dp = compiler.compile(schemaFile)
+			  .mapOrThrow(_.onPath("/"));
+	  if (dp.isError) {
+		  throw new WithDiagnosticsError(dp)
+	  }
+	  dp
   }
   
 }
