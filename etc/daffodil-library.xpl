@@ -8,7 +8,7 @@
       <option name="schema" required="true" />
       <option name="root" />          <!-- (QName) -->
 
-      <!--
+      <!-- TODO
       <output port="warnings" />
       <option name="show-trace" />    (boolean - default: false)
       <option name="assert-valid" />  (boolean - default: false)
@@ -18,7 +18,8 @@
    
    <declare-step type="dfdl:parse">
       <!-- 
-         The text content of the root element is used as the input.
+         The text content of the root element is used as the input to the 
+         parser.
          
          If the root element has an 'encoding' attribute with a value of 
          'base64', then the input is base64-decoded before being passed

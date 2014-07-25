@@ -3,7 +3,7 @@
 # Adapted from daffodil.sh
 #
 
-VERSION=0.5-0-SNAPSHOT
+VERSION=0.5.0
 SCALA_VERSION=2.10
 MAINCLASS=com.xmlcalabash.drivers.Main
 BINDIR="$( dirname "$0" )"

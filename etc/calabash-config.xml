@@ -5,8 +5,5 @@
                    class-name="edu.illinois.ncsa.daffodil.calabash.DfdlParseFileStep"/>
     <implementation type="dfdl:parse"
         class-name="edu.illinois.ncsa.daffodil.calabash.DfdlParseStep"/>
-                   
-   <piperack-load-pipeline name="csv">examples/csv/csv-pipeline.xpl</piperack-load-pipeline>
-   <piperack-load-pipeline name="pcap">examples/pcap/pcap-pipeline.xpl</piperack-load-pipeline>
 
 </xproc-config>

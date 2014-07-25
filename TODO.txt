@@ -1,5 +1,0 @@
-* Make sure that DFDL schemas are precompiled when pipeline is loaded via 
-    Piperack.
-* Ensure Piperack can be started such that it listens only on the localhost
-    IP address. 
-* Audit open-source licenses used and ensure compatibility.
