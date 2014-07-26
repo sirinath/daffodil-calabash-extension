@@ -67,7 +67,6 @@ extends DefaultStep(runtime, step) {
   val RootOption = new QName("", "root")
   var result: WritablePipe = null
   
-  // TODO add diagnostics output port
   override def setOutput(port: String, pipe: WritablePipe) {
     result = pipe
   }

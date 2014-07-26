@@ -1,0 +1,17 @@
+* Add scala-library.jar to distribution and rewrite script and
+  instructions to launch via Java.  Everyone has Java already
+  installed, but not Scala.  It makes the distribution a little bigger
+  (on the order of 8MB bigger), but it makes launching it a breeze for
+  new users.
+* Fix PCAP submodule.
+* Improve error reporting if the schema file doesn't exist.
+* Use Saxon-JDOM to turn JDOM result from Daffodil directly into
+  a Saxon XdmNode, instead of going to string and then parsing
+  to XdmNode.
+* Add support for following Daffodil options:
+  - Send warnings from Daffodil to the Calabash MessageListener.
+  - Send trace messages from Daffodil to the Calabash MessageListener.
+  - assert-valid - turn on validation support
+  - validate-schema - validate the DFDL schema itself
+* Replace use of Console with the Calabash MessageListener, or a 
+  custom LogWriter.

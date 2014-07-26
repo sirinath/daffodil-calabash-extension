@@ -8,11 +8,10 @@
       <option name="schema" required="true" />
       <option name="root" />          <!-- (QName) -->
 
-      <!-- TODO
-      <output port="warnings" />
-      <option name="show-trace" />    (boolean - default: false)
-      <option name="assert-valid" />  (boolean - default: false)
-      <option name="validate-schema" />  (boolean - default: false)
+      <!-- 
+	   TODO
+	   <option name="assert-valid" />  (boolean - default: false)
+	   <option name="validate-schema" />  (boolean - default: false)
       -->
    </declare-step>
    
