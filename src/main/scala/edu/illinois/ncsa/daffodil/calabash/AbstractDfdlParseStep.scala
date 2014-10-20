@@ -52,6 +52,9 @@ import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.WithDiagnosticsError
 import edu.illinois.ncsa.daffodil.calabash.DaffodilFacade.wdToRichWd
 import edu.illinois.ncsa.daffodil.compiler.Compiler
 import net.sf.saxon.s9api.QName
+import net.sf.saxon.tree.util.Orphan
+import net.sf.saxon.Configuration
+import net.sf.saxon.s9api.XdmNode
 import edu.illinois.ncsa.daffodil.api.DFDL.DataProcessor
 import java.io.File
 
@@ -111,7 +114,13 @@ extends DefaultStep(runtime, step) {
 		  result.write(xdmNode)
 	  } 
 	  catch {
-	  	case e:WithDiagnosticsError => Console.err.println(e.getMessage) 
+      		case e:WithDiagnosticsError => {
+      			Console.err.println(e.getMessage)
+			val nodeInfo = new Orphan(new Configuration())
+			nodeInfo.setStringValue(e.getMessage)
+			val xdmNode = new XdmNode(nodeInfo)
+      			step.reportError(xdmNode)
+		} 
 	  }
   }
   
