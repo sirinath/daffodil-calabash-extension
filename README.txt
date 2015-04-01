@@ -113,6 +113,9 @@ $ ./calabash-daffodil.sh examples/csv/csv-file-pipeline.xpl
 (or, for a prettier version of the output)
 $ ./calabash-daffodil.sh examples/csv/csv-file-pipeline.xpl | xmllint --format -
 
+The PCAP example can also be run (generates fairly large output)
+$ ./calabash-daffodil.sh examples/PCAP/pcap-file-pipeline.xpl
+
 From Windows:
 > scala -cp lib\*;lib_managed\*;target\scala-2.10\daffodil-calabash-extension_2.10-0.5.0.jar com.xmlcalabash.drivers.Main -c etc\calabash-config.xml examples\csv\csv-file-pipeline.xpl
 

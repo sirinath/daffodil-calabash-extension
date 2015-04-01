@@ -64,7 +64,7 @@ object SchemaRegistry {
 	  if (rootQName != null) {
 		  compiler.setDistinguishedRootNode(rootQName.getLocalName(), rootQName.getNamespaceURI())
 	  }
-	  compiler.compile(schemaFile)  
+	  compiler.compileFile(schemaFile)  
 	  	.mapOrThrow(_.onPath("/"));
   }
 }

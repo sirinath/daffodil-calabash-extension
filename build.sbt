@@ -12,7 +12,7 @@ licenses := Seq("University of Illinois/NCSA Open Source License" -> url("http:/
 
 scalaVersion := "2.10.4"
 
-libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-core" % "0.14.0-SNAPSHOT" 
+libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-core" % "1.0.0" 
   exclude("com.novocode", "junit-interface")
   excludeAll(ExclusionRule(name = "jline"))
   exclude("net.sourceforge.expectj", "expectj")
@@ -20,7 +20,7 @@ libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-core" % "0.14.0-SNAPSHO
   exclude("org.scala-tools.testing", "test-interface")
 )
 
-libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-lib" % "0.14.0-SNAPSHOT"
+libraryDependencies += ("edu.illinois.ncsa" %% "daffodil-lib" % "1.0.0"
   exclude("com.novocode", "junit-interface")
   excludeAll(ExclusionRule(name = "jline"))
   exclude("net.sourceforge.expectj", "expectj")
@@ -32,6 +32,7 @@ libraryDependencies ++= Seq(
   "commons-logging" % "commons-logging" % "1.1.+"
     , "commons-codec" % "commons-codec" % "1.6"
     , "commons-io" % "commons-io" % "2.4"
+    , "net.sf.saxon" % "Saxon-HE" % "9.6.0-1"
 )
 
 
@@ -57,6 +58,6 @@ resolvers += ("NCSA Sonatype Snapshots"
 // library dependencies
 EclipseKeys.withSource := true
 
-// add resources directories to .classpath
+// Add resources directories to .classpath
 //EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
 

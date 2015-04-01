@@ -4,13 +4,9 @@
                 name="pcap-pipeline"
                 version="1.0">
     <p:output port="result" primary="true"/>
-    
-    <p:option name="file" required="true"/>
 
-    <p:import href="../etc/daffodil-library.xpl"/>
+    <p:import href="../../etc/daffodil-library.xpl"/>
     
-    <dfdl:parse-file name="parse" schema="PCAP/schemas/pcap.dfdl.xsd"  
-        root="pcap:PCAP" xmlns:pcap="urn:pcap:2.4">
-        <p:with-option name="file" select="$file"/>
-    </dfdl:parse-file>
+    <dfdl:parse-file file="tcp.ecn.pcap" name="parse" schema="pcap.dfdl.xsd"  
+        root="pcap:PCAP" xmlns:pcap="urn:pcap:2.4"/>
 </p:declare-step>
